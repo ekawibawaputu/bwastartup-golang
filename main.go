@@ -23,6 +23,18 @@ func main() {
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 
+	// validasi token manual
+	// token ,err := authService.ValidateToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMX0.atId9l0QTbiWTZcb0A8SYxciCOft5Rlb-FAqutSvNVY")
+	// if err != nil {
+	// 	fmt.Println("error")
+	// }
+
+	// if token.Valid {
+	// 	fmt.Println("Valid")
+	// } else {
+	// 	fmt.Println("invalid")
+	// }
+
 	// fmt.Println(authService.GenerateToken(1001)) manually generated token
 
 	// upload avatar manually
