@@ -21,6 +21,33 @@ func main() {
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
 
+
+	// test service
+	// input := user.LoginInput{
+	// 	Email: "contohemail@test.com",
+	// 	Password: "password",
+	// }
+
+	// user, err := userService.Login(input)
+	// if err != nil {
+	// 	fmt.Println("Terjadi kesalahanan")
+	// 	fmt.Println(err.Error())
+	// }
+
+	// fmt.Println(user.Email)
+	// fmt.Println(user.Name)
+
+	// userByEmail, err := userRepository.FindByEmail("contohemail@test.com")
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// }
+
+	// if (userByEmail.ID == 0) {
+	// 	fmt.Println("User tidak ditemukan...")
+	// } else {
+	// 	fmt.Println(userByEmail.Name)
+	// }
+
 	// service ke repository
 	// userRepository := user.NewRepository(db)
 	// userService := user.NewService(userRepository)
@@ -39,9 +66,15 @@ func main() {
 	api := router.Group("api/v1")
 
 	api.POST("/users", userHandler.RegisterUser)
+	api.POST("/sessions", userHandler.Login)
 
 	router.Run()
 
+	// input dari user
+	// handler, mapping input dari user -> struct input
+	// service : melakukan mapping dari struct input ke struct User
+	// repository
+	// db
 
 }
 
