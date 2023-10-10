@@ -66,6 +66,10 @@ func (h *campaignHandler) GetCampaign(c *gin.Context){
 }
 
 func (h *campaignHandler) CreateCampaign(c *gin.Context) {
+// tangkap parameter dari user ke input struct
+// ambil current user dari jwt/handler
+// panggil service, parameternya input struct (dan juga buat slug)
+// panggil repository untuk simpan data campaign baru
 	var input campaign.CreateCampaignInput
 
 	err := c.ShouldBindJSON(&input)
@@ -93,7 +97,46 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 	
 }
-// tangkap parameter dari user ke input struct
-// ambil current user dari jwt/handler
-// panggil service, parameternya input struct (dan juga buat slug)
-// panggil repository untuk simpan data campaign baru
+
+func (h *campaignHandler) UpdateCampaign(c *gin.Context){
+	var inputID campaign.GetCampaignDetailInput
+
+	err := c.ShouldBindUri(&inputID)
+	if err != nil {
+		response := helper.APIResponse("Failed to update campaign", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	var inputData campaign.CreateCampaignInput
+
+	err = c.ShouldBindJSON(&inputData)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"erros" : errors}
+
+		response := helper.APIResponse("Failed to update campaign", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	currentUser := c.MustGet("currentUser").(user.User)
+	inputData.User = currentUser
+
+	updatedCampaign , err := h.service.UpdateCampaign(inputID, inputData)
+	if err != nil {
+		response := helper.APIResponse("Failed to update campaign", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Success update campaign", http.StatusOK, "success", campaign.FormatCampaign(updatedCampaign))
+	c.JSON(http.StatusOK, response)
+
+}
+// user masukkan input
+// handler
+// mapping dari input ke input struct (ada 2 : user, uri)
+// input dari user, dan juga input yang ada di uri ( passing ke service)
+// service
+// repository update data campaign
