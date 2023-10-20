@@ -101,7 +101,7 @@ func main() {
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHanlder(transactionService)
 
-	userWebHandler := webHandler.NewUserHandler()
+	userWebHandler := webHandler.NewUserHandler(userService)
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -109,7 +109,10 @@ func main() {
 	// router.LoadHTMLGlob("web/templates/**/*")
 	router.HTMLRender = loadTemplates("./web/templates")
 
-	router.Static("images", "./images")
+	router.Static("/images", "./images")
+	router.Static("/css", "./web/assets/css")
+	router.Static("/js", "./web/assets/js")
+	router.Static("/webfonts", "./web/assets/webfonts")
 	api := router.Group("api/v1")
 
 	api.POST("/users", userHandler.RegisterUser)
@@ -130,6 +133,12 @@ func main() {
 	api.GET("/trasactions/notification", transactionHandler.GetNotification)
 
 	router.GET("/users", userWebHandler.Index)
+	router.GET("/users/new", userWebHandler.New)
+	router.POST("/users", userWebHandler.Create)
+	router.GET("/users/edit/:id", userWebHandler.Edit)
+	router.POST("/users/update/:id", userWebHandler.Update)
+	router.GET("users/avatar/:id", userWebHandler.NewAvatar)
+	router.POST("users/avatar/:id", userWebHandler.CreateAvatar)
 
 	router.Run()
 
