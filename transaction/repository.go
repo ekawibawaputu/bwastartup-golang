@@ -12,6 +12,7 @@ type Repository interface {
 	GetByUserID(ID int) ([]Transaction, error)
 	Save(transaction Transaction) (Transaction, error)
 	Update(transaction Transaction) (Transaction, error)
+	FindAll() ([]Transaction, error)
 }
 
 func NewRepository(db *gorm.DB) *repository {
@@ -62,6 +63,17 @@ func (r *repository) GetByID(ID int) (Transaction, error) {
 	var transactions  Transaction
 	// menampilkan gambar didalam transaksi yang tidak berelasi langsung dengan tabel transaksi
 	err := r.db.Where("id = ?", ID).Find(&transactions).Error
+	if err != nil {
+		return transactions, err
+	}
+
+	return transactions, nil
+}
+
+func (r *repository) FindAll() ([]Transaction, error) {
+	var transactions []Transaction
+
+	err := r.db.Preload("Campaign").Order("id desc").Find(&transactions).Error
 	if err != nil {
 		return transactions, err
 	}
